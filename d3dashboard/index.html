@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3.js Test</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="test.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <button id="runPython">Run Python Script</button>
+    <script>
+        document.getElementById('runPython').addEventListener('click', () => {
+            fetch('http://localhost:3000/data')
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Output from Python script:', data);
+                    // Handle the output from the Python script using D3.js
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
