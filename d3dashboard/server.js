@@ -8,6 +8,7 @@ const port = 3000;
 // Allow requests from your HTML origin (e.g., http://localhost:3000)
 const allowedOrigins = [
     'http://127.0.0.1:5500', // Update this with your actual origin
+    'http://localhost:3000', 
     // Add more origins if needed
 ];
 
@@ -21,6 +22,14 @@ app.use(cors({
         }
     }
 }));
+
+// New route for the root URL
+app.get('/', (req, res) => {
+    const currentUrl = `${req.protocol}://${req.get('host')}/`;
+    const dataUrl = currentUrl + 'data'; // Construct the URL to the /data endpoint
+
+    res.send(`Welcome to our Python-Node.js integration example! Go <a href="${dataUrl}">here</a> to execute the Python script.`);
+});
 
 app.get('/data', (req, res) => {
     // Execute Python script
