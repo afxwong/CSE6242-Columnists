@@ -17,7 +17,7 @@ def main():
     url = "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv"
     data = pd.read_csv(url)
     # Print JSON data
-    json_data = data.to_json()
+    json_data = data.to_json(orient='records')
     print(json_data)
 
 if __name__ == "__main__":
