@@ -41,13 +41,14 @@ app.get('/data', (req, res) => {
         console.log(`Python script output: ${data}`);
         // Send data back to client
         result += data.toString()
-        // res.send(data.toString());
+        // res.send(result.toString());
     });
     pythonProcess.stdout.on('end', () => {
         try {
           // If JSON handle the data
         //   console.log(JSON.parse(result));
-        res.send(data.toString());
+        // res.send(data.toString());
+        res.send(result.toString())
         
         } catch (e) {
           // Otherwise treat as a log entry
