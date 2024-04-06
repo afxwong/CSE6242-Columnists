@@ -8,23 +8,35 @@
 <title>Image Viewer</title>
 <style>
   #image-container {
-    position: absolute;
-    left: 0;
-    top: 10%; /* Adjust as needed */
+    margin-top: 20px; /* Space between nav bar and image container */
     text-align: center;
-    width: 700px; /* Set the width */
-    height: 500px; /* Set the height */
+    float: left;
+    width: 900px; /* Set the width */
+    height: 700px; /* Set the height */
     overflow: hidden; /* Hide overflow to prevent image stretching */
+    border: 1px solid #ccc; /* Optional: Add a border */
+    margin-left: auto;
+    margin-right: auto;
   }
   #image-container img {
     max-width: 100%; /* Ensure image fits within container */
     max-height: 100%; /* Ensure image fits within container */
   }
   #buttons {
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translateY(-50%);
+    text-align: center;
+    margin-top: 10px;
+    float: left;
+    clear: left; /* Clear the floating elements */
+  }
+  #buttons button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-size: 16px;
   }
 </style>
 </head>
@@ -44,8 +56,8 @@
   <img id="displayed-image" src="" alt="Displayed Image">
 </div>
 <div id="buttons">
-  <button onclick="prevImage()">Previous</button>
-  <button onclick="nextImage()">Next</button>
+  <button class="red-button" onclick="prevImage()" style="background-color: red;">Previous</button>
+  <button class="green-button" onclick="nextImage()" style="background-color: green;">Next</button>
 </div>
 
 <script>
