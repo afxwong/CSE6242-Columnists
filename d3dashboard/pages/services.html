@@ -12,7 +12,7 @@
     text-align: center;
     float: left;
     width: 50%; /* Set the width */
-    height: 700px; /* Set the height */
+    height: fit-content;
     overflow: hidden; /* Hide overflow to prevent image stretching */
     border: 1px solid #ccc; /* Optional: Add a border */
     margin-left: auto;
@@ -40,7 +40,7 @@
   }
   #text-area {
     clear: both; /* Clear floats */
-    margin-top: 40%; /* Space between buttons and text area */
+    margin-top: 10%; /* Space between buttons and text area */
     text-align: center;
   }
   #text-area textarea {
@@ -51,6 +51,29 @@
   #text-area label {
     display: block; /* Ensure label takes full width */
     margin-bottom: 5px; /* Space between label and text area */
+  }
+  #figure-container {
+    margin-top: 20px; /* Space between nav bar and image container */
+    text-align: center;
+    float: right;
+    width: 50%; /* Set the width */
+    height: fit-content;
+    overflow: hidden; /* Hide overflow to prevent image stretching */
+    border: 1px solid #ccc; /* Optional: Add a border */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #text-area button {
+    background-color: rgb(47, 55, 207);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 0 auto; /* Center justify the button */
+    display: block; 
+    margin-top: 10px;
   }
 </style>
 </head>
@@ -69,6 +92,9 @@
 <div id="image-container">
   <img id="displayed-image" src="" alt="Displayed Image">
 </div>
+<div id="figure-container">
+    <img id="displayed-image" src="" alt="Displayed Image">
+  </div>
 <div id="buttons">
   <button class="red-button" onclick="prevImage()" style="background-color: red;">Previous</button>
   <button class="green-button" onclick="nextImage()" style="background-color: green;">Next</button>
@@ -76,6 +102,7 @@
 <div id="text-area">
     <label for="text-input">Enter your text:</label>
     <textarea placeholder="Enter your text here..."></textarea>
+    <button>Submit</button>
   </div>
 
 <script>

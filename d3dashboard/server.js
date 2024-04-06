@@ -8,7 +8,8 @@ const port = 3000;
 // Allow requests from your HTML origin (e.g., http://localhost:3000)
 const allowedOrigins = [
     'http://127.0.0.1:5500', // Update this with your actual origin
-    'http://localhost:3000', 
+    'http://localhost:3000',
+    'http://localhost:5500'
     // Add more origins if needed
 ];
 
