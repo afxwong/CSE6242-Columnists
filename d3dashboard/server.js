@@ -35,11 +35,23 @@ app.get('/data', (req, res) => {
     // Execute Python script
     const arg = req.query.arg;
     const pythonProcess = spawn('python', ['script.py', arg]);
-
+    let result = ''
     pythonProcess.stdout.on('data', (data) => {
         console.log(`Python script output: ${data}`);
         // Send data back to client
+        result += data.toString()
+        // res.send(data.toString());
+    });
+    pythonProcess.stdout.on('end', () => {
+        try {
+          // If JSON handle the data
+        //   console.log(JSON.parse(result));
         res.send(data.toString());
+        
+        } catch (e) {
+          // Otherwise treat as a log entry
+          console.log(result);
+        }
     });
 });
 
