@@ -33,7 +33,8 @@ app.get('/', (req, res) => {
 
 app.get('/data', (req, res) => {
     // Execute Python script
-    const pythonProcess = spawn('python', ['script.py']);
+    const arg = req.query.arg;
+    const pythonProcess = spawn('python', ['script.py', arg]);
 
     pythonProcess.stdout.on('data', (data) => {
         console.log(`Python script output: ${data}`);

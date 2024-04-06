@@ -22,14 +22,28 @@
         </ul>
     </nav>
     <div id="container"></div>
+    <input type="text" id="myTextInput" placeholder="Enter some text">
     <button id="runPython">Run Python Script</button>
     <script>
         document.getElementById('runPython').addEventListener('click', () => {
-            fetch('http://localhost:3000/data')
-                .then(response => response.text())
+            fetch(`http://localhost:3000/data?arg=${document.getElementById('myTextInput').value}`)
+                .then(response => response.json())
                 .then(data => {
                     console.log('Output from Python script:', data);
                     // Handle the output from the Python script using D3.js
+                    const svg = d3.select("#container").append("svg")
+                              .attr("width", 500)
+                              .attr("height", 100);
+
+                    svg.selectAll("rect")
+                        .data(data.values)
+                        .enter()
+                        .append("rect")
+                        .attr("x", (d, i) => i * 25)
+                        .attr("y", d => 100 - 10 * d)
+                        .attr("width", 20)
+                        .attr("height", d => d * 10)
+                        .attr("fill", "blue");
                 })
                 .catch(error => console.error('Error:', error));
         });
