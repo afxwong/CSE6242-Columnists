@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../style.css" />
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<title>Image Viewer</title>
+<style>
+  #image-container {
+    margin-top: 20px; /* Space between nav bar and image container */
+    text-align: center;
+    float: left;
+    width: 50%; /* Set the width */
+    height: fit-content;
+    overflow: hidden; /* Hide overflow to prevent image stretching */
+    border: 1px solid #ccc; /* Optional: Add a border */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #image-container img {
+    max-width: 100%; /* Ensure image fits within container */
+    max-height: 100%; /* Ensure image fits within container */
+  }
+  #buttons {
+    text-align: center;
+    margin-top: 10px;
+    float: left;
+    clear: left; /* Clear the floating elements */
+  }
+  #buttons button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  #text-area {
+    clear: both; /* Clear floats */
+    margin-top: 10%; /* Space between buttons and text area */
+    text-align: center;
+  }
+  #text-area textarea {
+    width: 50%; /* Set the width of the textarea */
+    height: 100px; /* Set the height of the textarea */
+    resize: none; /* Disable resizing */
+  }
+  #text-area label {
+    display: block; /* Ensure label takes full width */
+    margin-bottom: 5px; /* Space between label and text area */
+  }
+  #figure-container {
+    margin-top: 20px; /* Space between nav bar and image container */
+    text-align: center;
+    float: right;
+    width: 50%; /* Set the width */
+    height: fit-content;
+    overflow: hidden; /* Hide overflow to prevent image stretching */
+    border: 1px solid #ccc; /* Optional: Add a border */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #text-area button {
+    background-color: rgb(47, 55, 207);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 0 auto; /* Center justify the button */
+    display: block; 
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+    <nav>
+        <div class="heading">
+          <h4>The Columnists</h4>
+        </div>
+        <ul class="nav-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a class="active" href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+<div id="image-container">
+  <img id="displayed-image" src="" alt="Displayed Image">
+</div>
+<div id="figure-container">
+  <svg id="svg"></svg>
+  </div>
+<div id="buttons">
+  <button class="red-button" onclick="prevImage()" style="background-color: red;">Previous</button>
+  <button class="green-button" onclick="nextImage()" style="background-color: green;">Next</button>
+</div>
+<div id="text-area">
+    <label for="text-input">Enter your text:</label>
+    <textarea id="text-input" placeholder="Enter your text here..."></textarea>
+    <button id="submit-button">Submit</button>
+  </div>
+
+<script>
+  var currentIndex = 0;
+  var images = [
+    "510.jpg",
+    "511.jpg",
+    "512.jpg",
+    "513.jpg",
+    "514.jpg",
+    "515.jpg",
+    "516.jpg",
+    "517.jpg",
+    "518.jpg",
+    "519.jpg",
+    "520.jpg",
+    "521.jpg",
+    "522.jpg",
+    "523.jpg",
+    "524.jpg",
+    "526.jpg",
+    "527.jpg",
+    "528.jpg",
+    "529.jpg",
+    "530.jpg",
+    "531.jpg",
+    "532.jpg",
+    "533.jpg",
+    "534.jpg",
+    "535.jpg",
+    "536.jpg",
+    "537.jpg",
+    "538.jpg",
+    "539.jpg",
+    "540.jpg",
+    "541.jpg",
+    "542.jpg",
+    "543.jpg",
+    "544.jpg",
+    "545.jpg",
+    "546.jpg",
+    "547.jpg",
+    "548.jpg",
+    "549.jpg",
+    "550.jpg",
+    "551.jpg",
+    "552.jpg",
+    "553.jpg",
+    "554.jpg",
+    "555.jpg",
+    "556.jpg",
+    "557.jpg",
+    "558.jpg",
+    "559.jpg",
+    "560.jpg",
+    "561.jpg",
+    "562.jpg",
+    "563.jpg",
+    "564.jpg",
+    "565.jpg",
+    "566.jpg",
+    "567.jpg",
+    "568.jpg",
+    "569.jpg",
+    "570.jpg",
+    "571.jpg",
+    "572.jpg",
+    "573.jpg",
+    "574.jpg",
+    "575.jpg",
+    "576.jpg",
+    "577.jpg",
+    "578.jpg",
+    "579.jpg",
+    "580.jpg",
+    "581.jpg",
+    "582.jpg",
+    "583.jpg",
+    "584.jpg",
+    "585.jpg",
+    "586.jpg",
+    "587.jpg",
+    "588.jpg",
+    "589.jpg",
+    "590.jpg",
+    "591.jpg",
+    "592.jpg",
+    "593.jpg",
+    "594.jpg",
+    "595.jpg",
+    "596.jpg",
+    "597.jpg",
+    "598.jpg",
+    "599.jpg",
+    "600.jpg",
+    "601.jpg",
+    "602.jpg",
+    "603.jpg",
+    "604.jpg",
+    "605.jpg",
+    "606.jpg",
+    "607.jpg",
+    "608.jpg",
+    "609.jpg",
+    "610.jpg",
+    "611.jpg",
+    "612.jpg",
+    "613.jpg",
+    "614.jpg",
+    "615.jpg",
+    "616.jpg",
+    "617.jpg",
+    "618.jpg",
+    "619.jpg",
+    "620.jpg",
+    "621.jpg",
+    "622.jpg",
+    "623.jpg",
+    "624.jpg",
+    "625.jpg",
+    "626.jpg",
+    "627.jpg",
+    "628.jpg",
+    "629.jpg",
+    "630.jpg",
+    "631.jpg",
+    "632.jpg",
+    "633.jpg",
+    "634.jpg",
+    "635.jpg",
+    "636.jpg",
+    "637.jpg",
+    "638.jpg",
+    "639.jpg",
+    "640.jpg",
+    "641.jpg",
+    "642.jpg",
+    "643.jpg",
+    "644.jpg",
+    "645.jpg",
+    "646.jpg",
+    "647.jpg",
+    "648.jpg",
+    "649.jpg",
+    "650.jpg",
+    "651.jpg",
+    "652.jpg",
+    "653.jpg",
+    "654.jpg",
+    "655.jpg",
+    "656.jpg",
+    "657.jpg",
+    "658.jpg",
+    "659.jpg",
+    "660.jpg",
+    "661.jpg",
+    "662.jpg",
+    "663.jpg",
+    "664.jpg",
+    "665.jpg",
+    "666.jpg",
+    "667.jpg",
+    "668.jpg",
+    "669.jpg",
+    "670.jpg",
+    "671.jpg",
+    "672.jpg",
+    "673.jpg",
+    "674.jpg",
+    "675.jpg",
+    "676.jpg",
+    "677.jpg",
+    "678.jpg",
+    "679.jpg",
+    "680.jpg",
+    "681.jpg",
+    "682.jpg",
+    "683.jpg",
+    "684.jpg",
+    "685.jpg",
+    "686.jpg",
+    "687.jpg",
+    "688.jpg",
+    "689.jpg",
+    "690.jpg",
+    "691.jpg",
+    "692.jpg",
+    "693.jpg",
+    "694.jpg",
+    "695.jpg",
+    "696.jpg",
+    "697.jpg",
+    "698.jpg",
+    "699.jpg",
+    "700.jpg",
+    "701.jpg",
+    "702.jpg",
+    "703.jpg",
+    "704.jpg",
+    "705.jpg",
+    "706.jpg",
+    "707.jpg",
+    "708.jpg",
+    "709.jpg",
+    "710.jpg",
+    "711.jpg",
+    "712.jpg",
+    "713.jpg",
+    "714.jpg",
+    "715.jpg",
+    "716.jpg",
+    "717.jpg",
+    "718.jpg",
+    "719.jpg",
+    "720.jpg",
+    "721.jpg",
+    "722.jpg",
+    "723.jpg",
+    "724.jpg",
+    "725.jpg",
+    "726.jpg",
+    "727.jpg",
+    "728.jpg",
+    "729.jpg",
+    "730.jpg",
+    "731.jpg",
+    "732.jpg",
+    "733.jpg",
+    "734.jpg",
+    "735.jpg",
+    "736.jpg",
+    "737.jpg",
+    "738.jpg",
+    "739.jpg",
+    "740.jpg",
+    "741.jpg",
+    "742.jpg",
+    "743.jpg",
+    "744.jpg",
+    "745.jpg",
+    "746.jpg",
+    "747.jpg",
+    "748.jpg",
+    "749.jpg",
+    "750.jpg",
+    "751.jpg",
+    "752.jpg",
+    "753.jpg",
+    "754.jpg",
+    "755.jpg",
+    "756.jpg",
+    "757.jpg",
+    "758.jpg",
+    "759.jpg",
+    "760.jpg",
+    "761.jpg",
+    "762.jpg",
+    "763.jpg",
+    "764.jpg",
+    "765.jpg",
+    "766.jpg",
+    "767.jpg",
+    "768.jpg",
+    "769.jpg",
+    "770.jpg",
+    "771.jpg",
+    "772.jpg",
+    "773.jpg",
+    "774.jpg",
+    "775.jpg",
+    "776.jpg",
+    "777.jpg",
+    "778.jpg",
+    "779.jpg",
+    "780.jpg",
+    "781.jpg",
+    "782.jpg",
+    "783.jpg",
+    "784.jpg",
+    "785.jpg",
+    "786.jpg",
+    "787.jpg",
+    "788.jpg",
+    "789.jpg",
+    "790.jpg",
+    "791.jpg",
+    "792.jpg",
+    "793.jpg",
+    "794.jpg",
+    "795.jpg",
+    "796.jpg",
+    "797.jpg",
+    "798.jpg",
+    "799.jpg",
+    "800.jpg",
+    "801.jpg",
+    "802.jpg",
+    "803.jpg",
+    "804.jpg",
+    "805.jpg",
+    "806.jpg",
+    "807.jpg",
+    "808.jpg",
+    "809.jpg",
+    "810.jpg",
+    "811.jpg",
+    "812.jpg",
+    "813.jpg",
+    "814.jpg",
+    "815.jpg",
+    "816.jpg",
+    "817.jpg",
+    "818.jpg",
+    "819.jpg",
+    "820.jpg",
+    "821.jpg",
+    "822.jpg",
+    "823.jpg",
+    "824.jpg",
+    "825.jpg",
+    "826.jpg",
+    "827.jpg",
+    "828.jpg",
+    "829.jpg",
+    "830.jpg",
+    "831.jpg",
+    "832.jpg",
+    "833.jpg",
+    "834.jpg",
+    "835.jpg",
+    "836.jpg",
+    "837.jpg",
+    "838.jpg",
+    "839.jpg",
+    "840.jpg",
+    "841.jpg",
+    "842.jpg",
+    "843.jpg",
+    "844.jpg",
+    "845.jpg",
+    "846.jpg",
+    "847.jpg",
+    "848.jpg",
+    "849.jpg",
+    "850.jpg",
+    "851.jpg",
+    "852.jpg",
+    "853.jpg",
+    "854.jpg",
+    "855.jpg",
+    "856.jpg",
+    "857.jpg",
+    "858.jpg",
+    "859.jpg",
+    "860.jpg",
+    "861.jpg",
+    "862.jpg",
+    "863.jpg",
+    "864.jpg",
+    "865.jpg",
+    "866.jpg",
+    "867.jpg",
+    "868.jpg",
+    "869.jpg",
+    "870.jpg",
+    "871.jpg",
+    "872.jpg",
+    "873.jpg",
+    "874.jpg",
+    "875.jpg",
+    "876.jpg",
+    "877.jpg",
+    "878.jpg",
+    "879.jpg",
+    "880.jpg",
+    "881.jpg",
+    "882.jpg",
+    "883.jpg",
+    "884.jpg",
+    "885.jpg",
+    "886.jpg",
+    "887.jpg",
+    "888.jpg",
+    "889.jpg"
+];
+
+  var displayedImage = document.getElementById("displayed-image");
+
+  function showImage(index) {
+    displayedImage.src = "../cartoons/" + images[index];
+  }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex);
+  }
+
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showImage(currentIndex);
+  }
+
+  // Show the first image when the page loads
+  showImage(currentIndex);
+
+  document.getElementById('submit-button').addEventListener('click', () => {
+            fetch(`http://localhost:3000/data?arg=${document.getElementById('text-input').value}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Output from Python script:', data);
+                    
+                    // Handle the output from the Python script using D3.js
+                    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+                    width = 460 - margin.left - margin.right,
+                    height = 400 - margin.top - margin.bottom;
+
+                  // append the svg object to the body of the page
+                  var svg = d3.select("#svg")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                      .attr("transform",
+                            "translate(" + margin.left + "," + margin.top + ")");
+                  
+                  var x = d3.scaleLinear()
+                      .domain([0, 4000])
+                      .range([ 0, width ]);
+                    svg.append("g")
+                      .attr("transform", "translate(0," + height + ")")
+                      .call(d3.axisBottom(x));
+
+                  // Add Y axis
+                  var y = d3.scaleLinear()
+                    .domain([0, 500000])
+                    .range([ height, 0]);
+                  svg.append("g")
+                    .call(d3.axisLeft(y));
+
+                  // Add dots
+                  svg.append('g')
+                    .selectAll("dot")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                      .attr("cx", function (d) { return x(d.GrLivArea); } )
+                      .attr("cy", function (d) { return y(d.SalePrice); } )
+                      .attr("r", 1.5)
+                      .style("fill", "#69b3a2")
+
+                })
+                .catch(error => console.error('Error:', error));
+        });
+</script>
+</body>
+</html>
