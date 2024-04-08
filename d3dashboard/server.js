@@ -1,9 +1,13 @@
 const express = require('express');
 const { spawn } = require('child_process');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const port = 3000;
+
+const cartoonsDirectory = path.join(__dirname, 'cartoons');
 
 // Allow requests from your HTML origin (e.g., http://localhost:3000)
 const allowedOrigins = [
@@ -56,6 +60,28 @@ app.get('/data', (req, res) => {
         }
     });
 });
+
+app.get('/numCartoons', (req, res) => {
+    fs.readdir(cartoonsDirectory, (err, files) => {
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        res.send(imageFiles.length.toString())
+    })
+})
+
+app.get('/cartoons', (req, res) => {
+    const idx = parseInt(req.query.idx) || 0;
+
+    fs.readdir(cartoonsDirectory, (err, files) => {
+        if (err) {
+            res.status(500).send('Error reading photos directory');
+            return;
+        }
+        // Filter out non-image files and send the list of image filenames
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        const imagePath = path.join(cartoonsDirectory, imageFiles[idx])
+        res.sendFile(imagePath);
+    });
+})
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
