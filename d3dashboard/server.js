@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 const cartoonsDirectory = path.join(__dirname, 'cartoons');
-
+const tsneDirectory = path.join(__dirname, 'tsne');
 // Allow requests from your HTML origin (e.g., http://localhost:3000)
 const allowedOrigins = [
     'http://127.0.0.1:5500', // Update this with your actual origin
@@ -39,25 +39,38 @@ app.get('/', (req, res) => {
 app.get('/data', (req, res) => {
     // Execute Python script
     const arg = req.query.arg || "";
-    const pythonProcess = spawn('python', ['script.py', arg]);
-    let result = ''
-    pythonProcess.stdout.on('data', (data) => {
-        console.log(`Python script output: ${data}`);
-        // Send data back to client
-        result += data.toString()
-        // res.send(result.toString());
-    });
-    pythonProcess.stdout.on('end', () => {
-        try {
-          // If JSON handle the data
-        //   console.log(JSON.parse(result));
-        // res.send(data.toString());
-        res.send(result.toString())
+    const imgIdx = req.query.imgIdx || 0;
+    // const pythonProcess = spawn('python', ['script.py', arg]);
+    // let result = ''
+    // pythonProcess.stdout.on('data', (data) => {
+    //     console.log(`Python script output: ${data}`);
+    //     // Send data back to client
+    //     result += data.toString()
+    //     // res.send(result.toString());
+    // });
+    // pythonProcess.stdout.on('end', () => {
+    //     try {
+    //       // If JSON handle the data
+    //     //   console.log(JSON.parse(result));
+    //     // res.send(data.toString());
+    //     res.send(result.toString())
         
-        } catch (e) {
-          // Otherwise treat as a log entry
-          console.log(result);
+    //     } catch (e) {
+    //       // Otherwise treat as a log entry
+    //       console.log(result);
+    //     }
+    // });
+
+    fs.readdir(tsneDirectory, (err, files) => {
+        if (err) {
+            res.status(500).send('Error reading photos directory');
+            return;
         }
+        // Filter out non-image files and send the list of image filenames
+        // const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        files.sort()
+        const tsnePath = path.join(tsneDirectory, files[imgIdx])
+        res.sendFile(tsnePath);
     });
 });
 
@@ -77,8 +90,9 @@ app.get('/cartoons', (req, res) => {
             return;
         }
         // Filter out non-image files and send the list of image filenames
-        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
-        const imagePath = path.join(cartoonsDirectory, imageFiles[idx])
+        // const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        files.sort()
+        const imagePath = path.join(cartoonsDirectory, files[idx])
         res.sendFile(imagePath);
     });
 })

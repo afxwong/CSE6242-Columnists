@@ -77,6 +77,27 @@
     display: block; 
     margin-top: 10px;
   }
+  .tooltip {
+    position: absolute;
+    visibility: hidden;
+    background-color: #f9f9f9;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 10;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    color: #333;
+    font-size: 0.9em;
+    font-family: 'Montserrat', sans-serif;
+    pointer-events: none;
+    max-width: 300px; /* Maximum width to prevent very wide tooltips */
+    min-width: 50px; /* Minimum width to prevent very narrow tooltips */
+    text-align: left; /* Align text to the left for better readability */
+    white-space: normal; /* Allow text to wrap inside the tooltip */
+    word-wrap: break-word; /* Ensure long words do not stretch the tooltip */
+}
+
+
 </style>
 </head>
 <body>
@@ -122,7 +143,6 @@
 
         });
   var displayedImage = document.getElementById("displayed-image");
-  
   function showImage(index) {
     displayedImage.src = `http://localhost:3000/cartoons?idx=${index}`;
   }
@@ -130,35 +150,40 @@
   function nextImage() {
     currentIndex = (currentIndex + 1) % numCartoons;
     showImage(currentIndex);
+    showPlot()
   }
 
   function prevImage() {
     currentIndex = (currentIndex - 1 + numCartoons) % numCartoons;
     showImage(currentIndex);
+    showPlot()
   }
 
   async function showPlot() {
-    fetch(`http://localhost:3000/data`)
+    fetch(`http://localhost:3000/data?imgIdx=${currentIndex}`)
                 .then(response => response.json())
                 .then(data => {
+
                     console.log('Output from Python script:', data);
                     
                     var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                    width = 460 - margin.left - margin.right,
-                    height = 400 - margin.top - margin.bottom;
+                    width = 700 - margin.left - margin.right,
+                    height = 700 - margin.top - margin.bottom;
                   
                 
 
                   // append the svg object to the body of the page
                   var svg = d3.select("#svg")
-                      .attr("width", width + margin.left + margin.right)
-                      .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                      .attr("transform",
-                            "translate(" + margin.left + "," + margin.top + ")");
+                  .attr("width", width + margin.left + margin.right)
+                  .attr("height", height + margin.top + margin.bottom)
+                  .selectAll("g").data([null]); // Ensure only one <g> element exists
                   
+                  var gEnter = svg.enter().append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+                  
+                  svg = svg.merge(gEnter);
+
                   var x = d3.scaleLinear()
-                      .domain([0, 4000])
+                      .domain([0, 1])
                       .range([ 0, width ]);
                     svg.append("g")
                       .attr("transform", "translate(0," + height + ")")
@@ -166,6 +191,7 @@
                   
                       var tooltip = d3.select("#figure-container")
                       .append("div")
+                        .attr("class", "tooltip")
                         .style("position", "absolute")
                         .style("visibility", "hidden")
                         .style("pointer-events", "none")
@@ -173,8 +199,12 @@
 
                   // Add Y axis
                   var y = d3.scaleLinear()
-                    .domain([0, 500000])
+                    .domain([0, 1])
                     .range([ height, 0]);
+
+                  var colorScale = d3.scalePow()
+                    .domain(d3.extent(data.map(d => d.mean)))
+                    .range([0, 1])
                   svg.append("g")
                     .call(d3.axisLeft(y));
                     
@@ -185,9 +215,9 @@
 
                   var mousemove = function(event, d) {
                     tooltip
-                      .html("The exact value of<br>the Ground Living area is: " + d.GrLivArea)
-                      .style("left", (event.pageX) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                      .style("top", (event.pageY - 90) + "px")
+                      .html(`Caption: ${d.caption}<br>Votes: ${d.votes}<br>Mean User Humor Rating (0-2): ${d.mean}<br>`)
+                      .style("left", (event.pageX - 300) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                      .style("top", (event.pageY - 100) + "px")
                   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
@@ -196,20 +226,40 @@
                       .style("visibility", "hidden")
                   }
 
-                  // Add dots
-                  svg.append('g')
-                    .selectAll("dot")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                      .attr("cx", function (d) { return x(d.GrLivArea); } )
-                      .attr("cy", function (d) { return y(d.SalePrice); } )
-                      .attr("fill", d => {return d3.interpolateViridis(d.score)})
-                      .attr("r", 1.5)
-                      // .style("fill", "#69b3a2")
-                      .on("mouseover", mouseover)
-                      .on("mousemove", mousemove)
-                      .on("mouseleave", mouseleave)
+                gEnter.append("g")
+                  .attr("class", "x-axis")
+                  .attr("transform", `translate(0,${height})`)
+                  .merge(svg.select(".x-axis"))
+                  .call(d3.axisBottom(x));
+
+                gEnter.append("g")
+                  .attr("class", "y-axis")
+                  .merge(svg.select(".y-axis"))
+                  .call(d3.axisLeft(y));
+
+                // Bind data to circles
+                var circles = svg.selectAll(".dot")
+                  .data(data.sort((a, b) => a.mean-b.mean), d => d.id); // Assuming each data point has a unique id
+
+                // Enter new elements
+                circles.enter()
+                  .append("circle")
+                  .attr("class", "dot")
+                  .attr("r", d=> d.mean**4+1)
+                  .attr("cx", d => x(d.X))
+                  .attr("cy", d => y(d.Y))
+                  .style("fill", d => d3.interpolateCool(colorScale(d.mean)))
+                  .on("mouseover", mouseover)
+                  .on("mousemove", mousemove)
+                  .on("mouseleave", mouseleave);
+
+                // Update existing elements
+                circles.attr("cx", d => x(d.X))
+                  .attr("cy", d => y(d.Y))
+                  .style("fill", d => d3.interpolateCool(colorScale(d.mean)));
+
+                // Exit and remove old elements
+                circles.exit().remove();
                   
                   
                   
