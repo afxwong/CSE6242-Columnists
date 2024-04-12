@@ -211,19 +211,25 @@
                     var mouseover = function(event, d) {
                     tooltip
                       .style("visibility", "visible")
+                    
+                    svg.selectAll(".dot").attr('opacity', 0.5)
                   }
 
                   var mousemove = function(event, d) {
                     tooltip
                       .html(`Caption: ${d.caption}<br>Votes: ${d.votes}<br>Mean User Humor Rating (0-2): ${d.mean}<br>`)
-                      .style("left", (event.pageX - 300) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                      .style("top", (event.pageY - 100) + "px")
+                      .style("left", (event.pageX - 310) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                      .style("top", (event.pageY - 140) + "px")
+                    
+                    svg.selectAll(".dot").attr('opacity', t => t == d ? 1.0 : 0.3)
                   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
                   var mouseleave = function(event, d) {
                     tooltip
                       .style("visibility", "hidden")
+                    
+                      svg.selectAll(".dot").attr('opacity', 1)
                   }
 
                 gEnter.append("g")
@@ -239,7 +245,7 @@
 
                 // Bind data to circles
                 var circles = svg.selectAll(".dot")
-                  .data(data.sort((a, b) => a.mean-b.mean), d => d.id); // Assuming each data point has a unique id
+                  .data(data.sort((a, b) => a.mean-b.mean), d => d.caption);
 
                 // Enter new elements
                 circles.enter()
