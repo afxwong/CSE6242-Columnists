@@ -176,7 +176,7 @@
                   var svg = d3.select("#svg")
                   .attr("width", width + margin.left + margin.right)
                   .attr("height", height + margin.top + margin.bottom)
-                  .selectAll("g").data([null]); // Ensure only one <g> element exists
+                  .selectAll("g").data([null]);
                   
                   var gEnter = svg.enter().append("g").attr("transform", `translate(${margin.left},${margin.top})`);
                   
@@ -185,6 +185,7 @@
                   var x = d3.scaleLinear()
                       .domain([0, 1])
                       .range([ 0, width ]);
+                
                     svg.append("g")
                       .attr("transform", "translate(0," + height + ")")
                       .call(d3.axisBottom(x));
@@ -277,78 +278,73 @@
   showImage(currentIndex);
   showPlot();
   document.getElementById('submit-button').addEventListener('click', () => {
-            fetch(`http://localhost:3000/data?arg=${document.getElementById('text-input').value}`)
+            fetch(`http://localhost:3000/data?imgIdx=${currentIndex+1}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Output from Python script:', data);
                     
-                  
-                
-
+                  const X = Math.random()
+                const Y = Math.random()
+                const mean = 0.5
+                const datum = {"X":Math.random(),"Y":Math.random(),"caption":document.getElementById('text-input').value,"mean":0.5,"votes":9}
                   // append the svg object to the body of the page
-                  var svg = d3.select("#svg")
-                      .attr("width", width + margin.left + margin.right)
-                      .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                      .attr("transform",
-                            "translate(" + margin.left + "," + margin.top + ")");
-                  
-                  var x = d3.scaleLinear()
-                      .domain([0, 4000])
-                      .range([ 0, width ]);
-                    svg.append("g")
-                      .attr("transform", "translate(0," + height + ")")
-                      .call(d3.axisBottom(x));
-                  
-                      var tooltip = d3.select("#figure-container")
+                  var svg = d3.select("#svg").select("g")
+                  // .attr("width", width + margin.left + margin.right)
+                  // .attr("height", height + margin.top + margin.bottom)
+                  // // .selectAll("g")
+                  var tooltip = d3.select("#figure-container")
                       .append("div")
+                        .attr("class", "tooltip")
                         .style("position", "absolute")
                         .style("visibility", "hidden")
                         .style("pointer-events", "none")
                         .text("tooltip");
-
-                  // Add Y axis
-                  var y = d3.scaleLinear()
-                    .domain([0, 500000])
-                    .range([ height, 0]);
-                  svg.append("g")
-                    .call(d3.axisLeft(y));
-                    
-                    var mouseover = function(event, d) {
+                // // Bind data to circles
+                // var circles = svg.selectAll(".dot")
+                var mouseover = function(event, d) {
                     tooltip
                       .style("visibility", "visible")
+                    
+                    svg.selectAll(".dot").attr('opacity', 0.5)
                   }
 
                   var mousemove = function(event, d) {
                     tooltip
-                      .html("The exact value of<br>the Ground Living area is: " + d.GrLivArea)
-                      .style("left", (event.pageX) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                      .style("top", (event.pageY - 90) + "px")
+                      .html(`Caption: <b>${d.caption}</b><br>Mean User Humor Rating (1-3): ${d.mean}<br>`)
+                      .style("left", (event.pageX - 310) + "px")
+                      .style("top", (event.pageY - 140) + "px")
+                    
+                    svg.selectAll(".dot").attr('opacity', t => t == d ? 1.0 : 0.3)
                   }
 
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
                   var mouseleave = function(event, d) {
                     tooltip
                       .style("visibility", "hidden")
+                    
+                      svg.selectAll(".dot").attr('opacity', 1)
                   }
 
-                  // Add dots
-                  svg.append('g')
-                    .selectAll("dot")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                      .attr("cx", function (d) { return x(d.GrLivArea); } )
-                      .attr("cy", function (d) { return y(d.SalePrice); } )
-                      .attr("fill", d => {return d3.interpolateViridis(d.score)})
-                      .attr("r", 1.5)
-                      // .style("fill", "#69b3a2")
-                      .on("mouseover", mouseover)
-                      .on("mousemove", mousemove)
-                      .on("mouseleave", mouseleave)
-                  
-                  
-                  
+                
+                
+                var x = d3.scaleLinear()
+                      .domain([0, 1])
+                      .range([ 0, width ]);
+                
+                var y = d3.scaleLinear()
+                    .domain([0, 1])
+                    .range([ height, 0]);
+                // Enter new elements
+                svg
+                  .append("circle")
+                  .datum(datum)
+                  .attr("class", "dot")
+                  .attr("r", 10)
+                  .attr("cx", d => x(d.X))
+                  .attr("cy", d => y(d.Y))
+                  .style("fill", "orange")
+                  .on("mouseover", mouseover)
+                  .on("mousemove", mousemove)
+                  .on("mouseleave", mouseleave);
+
                 })
                 .catch(error => console.error('Error:', error));
         });
