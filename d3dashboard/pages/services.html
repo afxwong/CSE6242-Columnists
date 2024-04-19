@@ -217,7 +217,7 @@
 
                   var mousemove = function(event, d) {
                     tooltip
-                      .html(`Caption: ${d.caption}<br>Votes: ${d.votes}<br>Mean User Humor Rating (0-2): ${d.mean}<br>`)
+                      .html(`Caption: <b>${d.caption}</b><br>Votes: ${d.votes}<br>Mean User Humor Rating (1-3): ${d.mean}<br>`)
                       .style("left", (event.pageX - 310) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                       .style("top", (event.pageY - 140) + "px")
                     
