@@ -129,7 +129,10 @@
 <script>
   var currentIndex = 0;
   
-
+  var margin = {top: 10, right: 30, bottom: 30, left: 60},
+                    width = 700 - margin.left - margin.right,
+                    height = 700 - margin.top - margin.bottom;
+  
   let numCartoons;
   fetch(`http://localhost:3000/numCartoons`).then(res => {
     if (!res.ok) {
@@ -166,9 +169,6 @@
 
                     console.log('Output from Python script:', data);
                     
-                    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                    width = 700 - margin.left - margin.right,
-                    height = 700 - margin.top - margin.bottom;
                   
                 
 
@@ -282,9 +282,6 @@
                 .then(data => {
                     console.log('Output from Python script:', data);
                     
-                    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                    width = 460 - margin.left - margin.right,
-                    height = 400 - margin.top - margin.bottom;
                   
                 
 
